@@ -17,6 +17,7 @@ app.use(express.json()); //Json files
 // Serve Static Files (This allows the server to automatically send the files from the path we chose)
 app.use(express.static(path.join(__dirname, 'public'))); // Serves form.html and other client files
 
+const validateFormData = require('./validation.js'); //importing the validation file
 const db = require('./database.js'); //inporting the database connection
 
 // Route to serve the HTML form when a user visits the root URL: localhost:3000
@@ -28,6 +29,23 @@ app.get('/', (req, res) => {
 // it tells the server what to do when it receives a POST request at the /submit-form endpoint
 app.post('/submit-form', async (req, res) =>{
 
+    const { first_name, second_name, email, phone_number, eircode} = req.body;
+    const errors = validateFormData(req.body);
+
+    //if validation fails, it will send a 400 bad request with the status of failer
+    if (errors.length > 0){
+        return res.status(400).send({
+            message: 'Validation has failed.',
+            errors: errors
+        });
+    }
+
+    //Data Sanitization (XSS Protection - Task D)
+    const safe_first_name = sanitize(first_name);
+    const safe_second_name = sanitize(second_name);
+    const safe_email = sanitize(email);
+    const safe_phone_number = sanitize(phone_number);
+    const safe_eircode = sanitize(eircode);
     //need to create the const to get all the attributes from the form: (inside the name)
 });
 

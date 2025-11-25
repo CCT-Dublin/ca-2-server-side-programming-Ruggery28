@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+//function to validate all the inputs.
 function validateFormData({first_name, second_name, email, phone_number, eircode}){
 
     // Regex is used for enforcing character rules and specific formats
@@ -39,4 +41,26 @@ function validateFormData({first_name, second_name, email, phone_number, eircode
     if(eircodeRegex.test(eircode)){
         error.push("Eircode must starts with a letter and contain 6 characters total.")
     }
+
+    return error;
 }
+
+//function to clean and replace simbols that can prevent XSS attacks
+function sanitize(input) {
+    if (typeof input !== 'string'){
+        return input; //handle non-string inputs safely
+    }
+
+    sanitized_input = sanitized_input.replace(/&/g, '&amp;');    // Replace ampersands
+    // Replace less-than and greater-than signs
+    sanitized_input = sanitized_input.replace(/</g, '&lt;');
+    sanitized_input = sanitized_input.replace(/>/g, '&gt;'); 
+    // Replace quotes
+    sanitized_input = sanitized_input.replace(/"/g, '&quot;');
+    sanitized_input = sanitized_input.replace(/'/g, '&#39;'); 
+
+    return sanitized_input; 
+}
+
+
+module.exports = validateFormData;
