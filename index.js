@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // Serves form.html and
 
 const validateFormData = require('./validation.js'); //importing the validation file
 const db = require('./database.js'); //inporting the database connection
+ensureTableExists(); //make sure the table exists before we start handling requests
 
 // Route to serve the HTML form when a user visits the root URL: localhost:3000
 app.get('/', (req, res) => {
@@ -46,7 +47,27 @@ app.post('/submit-form', async (req, res) =>{
     const safe_email = sanitize(email);
     const safe_phone_number = sanitize(phone_number);
     const safe_eircode = sanitize(eircode);
-    //need to create the const to get all the attributes from the form: (inside the name)
+    
+    //sql query to insert the data into the table
+    const insertSQL = `
+    INSERT INTO mysql_table (first_name, second_name, email, phone_number, eircode)
+    VALUES (?, ?, ?, ?, ?) 
+    `;
+    //array to store the safe and sanitize form input
+    const data = [safe_first_name, safe_second_name, safe_email, safe_phone_number, safe_eircode]; 
+
+    try{
+        //execute the query in the await mode
+        await db.query(insertSQL, data);
+        //if success will display this message
+        res.status(201).send('Success! Data has been saved correctly.')
+    }catch(error){
+        //otherwise, will catch the error and display it
+        console.error('Database insertion has failed: ', error);
+        res.status(500).send('Database error occured: Failed to save record!');
+    }
+
+
 });
 
 

@@ -1,22 +1,3 @@
-// method to validate the form before submission
-document.addEventListener('DOMContentLoaded', function() {
-    // Get a reference to the form element using its ID from form.html
-    const form = document.getElementById('submissionForm');
-    
-    // Attach an event listener to the form's 'submit' event
-    form.addEventListener('submit', function(event) {
-        
-        // Call the main validation function
-        if (!validateFormData()) {
-            // If validateForm() returns false (meaning validation failed),
-            // this line stops the form from performing its default action, 
-            // which is sending the POST request to the server.
-            event.preventDefault(); 
-        }
-    });
-});
-
-
 //function to validate all the inputs.
 function validateFormData({first_name, second_name, email, phone_number, eircode}){
 
@@ -64,3 +45,4 @@ function sanitize(input) {
 
 
 module.exports = validateFormData;
+module.exports = sanitize;
