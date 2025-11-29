@@ -5,36 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CA_2 Server Side</title>
+    <script src="validation.js"></script>
 </head>
 
 <body>
     <h1>CA-2 Server Side Programming</h1>
-    <form id="submissionform" action="/submit-form" action="POST">
+    <form id="submissionform" method="POST" action="/submit-form">
 
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="first_name" required><br><br>
-        <div class="error" id="firstNameError"></div>
+        <!-- <div class="error" id="firstNameError"></div> -->
 
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="last_name" required><br><br>
-        <div class="error" id="lastNameError"></div>
-
-        <label for="phoneNumber">Last Name:</label>
-        <input type="text" id="phone" name="phone_number" required><br><br>
-        <div class="error" id="emailError"></div>
+        <label for="SecondName">Second Name:</label>
+        <input type="text" id="SecondName" name="second_name" required><br><br>
+        <!-- <div class="error" id="lastNameError"></div> -->
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
-        <div class="error" id="phoneNumberError"></div>
+        <!-- <div class="error" id="phoneNumberError"></div> -->
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phone" name="phone_number" required><br><br>
+        <!-- <div class="error" id="emailError"></div> -->
 
         <label for="eircode">Eircode:</label>
         <input type="text" id="eircode" name="eircode" required><br><br>
-        <div class="error" id="eircodeError"></div>
+        <!-- <div class="error" id="eircodeError"></div> -->
 
         <input type="submit" value="Submit">
 
     </form>
-    <script src="validation.js"></script>
+    
 
 </body>
 

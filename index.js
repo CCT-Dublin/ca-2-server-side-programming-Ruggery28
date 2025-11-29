@@ -1,3 +1,5 @@
+const {validateFormData, sanitize} = require('./validation.js'); //importing the validation file
+const {db} = require('./database.js'); //inporting the database connection
 //(This will be the Server/Logic)
 //To set up the express we need 4 main concepts
 //1. Export express
@@ -17,9 +19,6 @@ app.use(express.json()); //Json files
 // Serve Static Files (This allows the server to automatically send the files from the path we chose)
 app.use(express.static(path.join(__dirname, 'public'))); // Serves form.html and other client files
 
-const validateFormData = require('./validation.js'); //importing the validation file
-const db = require('./database.js'); //inporting the database connection
-ensureTableExists(); //make sure the table exists before we start handling requests
 
 // Route to serve the HTML form when a user visits the root URL: localhost:3000
 app.get('/', (req, res) => {
@@ -32,9 +31,11 @@ app.post('/submit-form', async (req, res) =>{
 
     const { first_name, second_name, email, phone_number, eircode} = req.body;
     const errors = validateFormData(req.body);
+    console.log('receiving data error', req.body);
 
     //if validation fails, it will send a 400 bad request with the status of failer
     if (errors.length > 0){
+        console.log('Error in validation is here.')
         return res.status(400).send({
             message: 'Validation has failed.',
             errors: errors
@@ -55,9 +56,10 @@ app.post('/submit-form', async (req, res) =>{
     `;
     //array to store the safe and sanitize form input
     const data = [safe_first_name, safe_second_name, safe_email, safe_phone_number, safe_eircode]; 
-
+    
     try{
         //execute the query in the await mode
+        console.log('Error in executing query is here.')
         await db.query(insertSQL, data);
         //if success will display this message
         res.status(201).send('Success! Data has been saved correctly.')
@@ -66,12 +68,17 @@ app.post('/submit-form', async (req, res) =>{
         console.error('Database insertion has failed: ', error);
         res.status(500).send('Database error occured: Failed to save record!');
     }
-
-
+    
+    
 });
 
+//await ensureTableExists(); //running the function inside the database to ensure it exists first.
 
 //...Part 4 of express:
-app.listen(port, () =>{
-    console.log('Server is running on port: ', port);
-});
+async function startServer() {
+    app.listen(port, () => {
+        console.log(`Server is running on port: ${port}`);
+    });
+}
+
+startServer();
