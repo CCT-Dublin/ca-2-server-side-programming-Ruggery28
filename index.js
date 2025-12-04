@@ -1,6 +1,8 @@
-const {validateFormData, sanitize} = require('./validation.js'); //importing the validation file
+const validation = require('./validation.js'); //importing the validation file
 const {db} = require('./database.js'); //inporting the database connection
 const multer = require('multer'); //importing multer, the mildware to handle the file.
+const fs = require('fs'); //importing the library fs to handle the reading and deliting file.
+const csv = require('csv-parser'); 
 //(This will be the Server/Logic)
 //To set up the express we need 4 main concepts
 //1. Export express
@@ -39,7 +41,7 @@ app.get('/', (req, res) => {
 app.post('/submit-form', async (req, res) =>{
 
     const { first_name, second_name, email, phone_number, eircode} = req.body;
-    const errors = validateFormData(req.body);
+    const errors = validation.validateFormData(req.body);
     console.log('receiving data error', req.body);
 
     //if validation fails, it will send a 400 bad request with the status of failer
@@ -52,11 +54,11 @@ app.post('/submit-form', async (req, res) =>{
     }
 
     //Data Sanitization (XSS Protection - Task D)
-    const safe_first_name = sanitize(first_name);
-    const safe_second_name = sanitize(second_name);
-    const safe_email = sanitize(email);
-    const safe_phone_number = sanitize(phone_number);
-    const safe_eircode = sanitize(eircode);
+    const safe_first_name = validation.sanitize(first_name);
+    const safe_second_name = validation.sanitize(second_name);
+    const safe_email = validation.sanitize(email);
+    const safe_phone_number = validation.sanitize(phone_number);
+    const safe_eircode = validation.sanitize(eircode);
     
     //sql query to insert the data into the table
     const insertSQL = `
@@ -82,20 +84,88 @@ app.post('/submit-form', async (req, res) =>{
 });
 
 // POST Route: Handles CSV file upload and processing
-app.post('/upload-csv', upload.single('csvFile'), async (req, res) => {
-    
-    // Check if a file was actually uploaded
+app.post('/upload-csv', upload.single('csvFile'), async (req, res) => { 
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
 
     const filePath = req.file.path;
-    
-    // --- Placeholder for CSV processing logic (next step) ---
-    console.log(`Processing file at: ${filePath}`);
+    const validRecords = [];
+    const invalidRecords = [];
+    let transactionSuccess = true;
 
-    // Temporary success response for testing the upload middleware
-    res.send('File received successfully. Ready to process CSV.'); 
+    try {
+        // --- PARSE AND VALIDATE CSV DATA ---
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(filePath)
+                .pipe(csv()) // Pipe the file stream into the CSV parser
+                .on('data', (row) => {
+                    // Normalize variable names to match validation.js expectations
+                    const data = {
+                        first_name: row.first_name || row.First_Name,
+                        second_name: row.second_name || row.Second_Name || row.last_name || row.Last_Name, 
+                        email: row.email || row.Email,
+                        phone_number: row.phone_number || row.Phone_Number,
+                        eircode: row.eircode || row.Eircode
+                    };
+                    
+                    const errors = validation.validateFormData(data); 
+
+                    if (errors.length === 0) {
+                        // If valid, sanitize and store for bulk insertion
+                        const safeRecord = [
+                            validation.sanitize(data.first_name),
+                            validation.sanitize(data.second_name),
+                            validation.sanitize(data.email),
+                            validation.sanitize(data.phone_number),
+                            validation.sanitize(data.eircode)
+                        ];
+                        validRecords.push(safeRecord);
+                    } else {
+                        invalidRecords.push({ row: data, errors: errors });
+                    }
+                })
+                .on('end', () => {
+                    resolve(); // Parsing complete
+                })
+                .on('error', (err) => {
+                    reject(err); // File stream error
+                });
+        });
+
+        // --- BULK INSERT VALID RECORDS ---
+        if (validRecords.length > 0) {
+            const insertSql = `
+                INSERT INTO mysql_table (first_name, second_name, email, phone_number, eircode)
+                VALUES ?
+            `;
+            // Execute the bulk insert
+            await db.query(insertSql, [validRecords]);
+        }
+
+    } catch (error) {
+        console.error('CSV Processing Error or DB Insertion Failed:', error);
+        transactionSuccess = false;
+        // If the entire transaction fails due to a DB error
+        return res.status(500).send({
+            message: 'An internal error occurred during database processing.',
+            details: error.message
+        });
+    } finally {
+        // --- CLEANUP (Important for storage) ---
+        fs.unlink(filePath, (err) => { // Delete the temporary file
+            if (err) console.error('Error deleting temp file:', err);
+        });
+    }
+
+    // --- FINAL RESPONSE ---
+    if (transactionSuccess) {
+        res.status(200).send({
+            message: `CSV processed successfully. ${validRecords.length} records inserted.`,
+            invalid_records: invalidRecords.length,
+            details: invalidRecords
+        });
+    }
 });
 
 
