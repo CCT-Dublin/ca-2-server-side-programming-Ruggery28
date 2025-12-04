@@ -1,5 +1,6 @@
 const {validateFormData, sanitize} = require('./validation.js'); //importing the validation file
 const {db} = require('./database.js'); //inporting the database connection
+const multer = require('multer'); //importing multer, the mildware to handle the file.
 //(This will be the Server/Logic)
 //To set up the express we need 4 main concepts
 //1. Export express
@@ -12,6 +13,14 @@ const port = 3000; //this value was required for this assignment
 
 // We need to require path for secure static serving
 const path = require('path');
+
+// --- MULTER SETUP (for file uploads) ---
+const upload = multer({ 
+    // Define where to temporarily store the files
+    dest: 'uploads/', 
+    // Set file size limits (e.g., 5MB)
+    limits: { fileSize: 5 * 1024 * 1024 } 
+});
 
 //MiddleWare needs a translator from the HTML data and Json to the server:
 app.use(express.urlencoded({extended: true})); //URL-encoded - HTML
@@ -71,6 +80,24 @@ app.post('/submit-form', async (req, res) =>{
     
     
 });
+
+// POST Route: Handles CSV file upload and processing
+app.post('/upload-csv', upload.single('csvFile'), async (req, res) => {
+    
+    // Check if a file was actually uploaded
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    const filePath = req.file.path;
+    
+    // --- Placeholder for CSV processing logic (next step) ---
+    console.log(`Processing file at: ${filePath}`);
+
+    // Temporary success response for testing the upload middleware
+    res.send('File received successfully. Ready to process CSV.'); 
+});
+
 
 //await ensureTableExists(); //running the function inside the database to ensure it exists first.
 
