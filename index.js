@@ -38,17 +38,25 @@ app.get('/', (req, res) => {
 });
 
 // it tells the server what to do when it receives a POST request at the /submit-form endpoint
-app.post('/submit-form', async (req, res) =>{
+app.post('/submit-form', upload.none(), async (req, res) =>{
 
-    if (!req.body || Object.keys(req.body).length === 0) {
+    // Add a guard clause to prevent crash if req.body is undefined.
+    // If req.body is undefined, we use an empty object {} instead.
+    const safeBody = req.body || {};
+
+    // Use safeBody for destructuring
+    const { first_name, second_name, email, phone_number, eircode} = safeBody;
+    
+    // Optional: Return a cleaner error message if the entire body is empty.
+    if (Object.keys(safeBody).length === 0) {
         return res.status(400).send({
-            message: 'Validation has failed.',
-            errors: ["Form data is missing or empty. Please fill in all fields."]
+             message: 'Validation has failed.',
+             errors: ["Form submission failed: No data was received by the server. Please check all fields."]
         });
     }
     
-    const { first_name, second_name, email, phone_number, eircode} = req.body;
-    const errors = validation.validateFormData(req.body);
+    // Now safely proceed with validation
+    const errors = validation.validateFormData(safeBody);
     console.log('receiving data error', req.body);
 
     //if validation fails, it will send a 400 bad request with the status of failer

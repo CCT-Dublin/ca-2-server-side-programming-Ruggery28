@@ -8,19 +8,19 @@ function validateFormData({first_name, second_name, email, phone_number, eircode
     const phoneRegex = /^[0-9]{10}$/; // Exactly 10 digits
     const eircodeRegex = /^[a-zA-Z0-9]{1}[a-zA-Z0-9]{5}$/; // Starts with 1 digit, followed by 5 alphanumeric
 
-    if(!nameRegex.test(first_name) || !nameRegex.test(second_name)){
+    if(!first_name || !second_name || !nameRegex.test(first_name) || !nameRegex.test(second_name)){
         errors.push("Names must be alphanumeric and contains a maximum of 20 characters.")
     }
 
-    if(!emailRegex.test(email)){
+    if(!email || !emailRegex.test(email)){
         errors.push("Email address format is invalid.")
     }
 
-    if(!phoneRegex.test(phone_number)){
+    if(!phone_number || !phoneRegex.test(phone_number)){
         errors.push("Phone number must be only numeric and contains exactly 10 digits.")
     }
 
-    if(!eircodeRegex.test(eircode)){
+    if(!eircode || !eircodeRegex.test(eircode)){
         errors.push("Eircode must starts with a letter and contain 6 characters total.")
     }
 
