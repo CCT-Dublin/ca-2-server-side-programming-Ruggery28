@@ -40,6 +40,13 @@ app.get('/', (req, res) => {
 // it tells the server what to do when it receives a POST request at the /submit-form endpoint
 app.post('/submit-form', async (req, res) =>{
 
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).send({
+            message: 'Validation has failed.',
+            errors: ["Form data is missing or empty. Please fill in all fields."]
+        });
+    }
+    
     const { first_name, second_name, email, phone_number, eircode} = req.body;
     const errors = validation.validateFormData(req.body);
     console.log('receiving data error', req.body);
