@@ -60,8 +60,8 @@ app.post('/submit-form', upload.none(), async (req, res) =>{
     console.log('receiving data error', req.body);
 
     //if validation fails, it will send a 400 bad request with the status of failer
-    if (errors.length > 0){
-        console.log('Error in validation is here.')
+    if (Object.keys(errors).length > 0){
+        console.log('Error in validation is here (line 64).')
         return res.status(400).send({
             message: 'Validation has failed.',
             errors: errors
@@ -126,7 +126,7 @@ app.post('/upload-csv', upload.single('csvFile'), async (req, res) => {
                     
                     const errors = validation.validateFormData(data); 
 
-                    if (errors.length === 0) {
+                    if (Object.keys(errors).length === 0) {
                         // If valid, sanitize and store for bulk insertion
                         const safeRecord = [
                             validation.sanitize(data.first_name),

@@ -1,0 +1,99 @@
+/* Basic reset and Background */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #91060D; /* Deep Red Background */
+    color: #F0F4F7; /* Light text for contrast */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+/* Main Heading */
+h1 {
+    color: #F8B229; /* Gold/Yellow for Heading */
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 3px solid #E50000; /* Bright Red underline */
+    padding-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Container for all forms (Dark Green) */
+#submissionform, #uploadform {
+    background-color: #165B33; /* Dark Green Form Container */
+    border: 2px solid #F8B229; /* Gold/Yellow Border */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 40px; 
+    color: #FFFFFF; /* White text inside the form */
+}
+
+/* Input Fields */
+input[type="text"], input[type="email"], input[type="file"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin-bottom: 15px; 
+    border: 1px solid #187F42; /* Bright Green input border */
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #333; /* Dark text inside the input field */
+}
+
+/* Buttons */
+button {
+    background-color: #E50000; /* Bright Red Button */
+    color: white;
+    padding: 12px 25px;
+    border: 2px solid #F8B229; /* Gold/Yellow button border */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #C00000; /* Slightly darker red on hover */
+    transform: translateY(-1px);
+}
+
+/* Horizontal Rule Separator */
+hr {
+    border: 0;
+    height: 3px;
+    background-color: #F8B229; /* Gold/Yellow Separator */
+    width: 60%;
+    margin: 50px 0; 
+}
+
+/* Field-Specific Error Message (for placement below inputs) */
+.error-message {
+    display: block;
+    color: #F8B229; /* Gold/Yellow as per your color scheme */
+    font-size: 0.85em;
+    margin-top: 5px;
+    min-height: 1.2em; /* Reserves space even when empty */
+}
+
+.error-message:empty {
+    display: none; /* Hide when no error */
+}
+
+/* General Message Area (Success/Failure area - NO BACKGROUND COLOR) */
+#resultsMessage {
+    background-color: transparent; /* Transparent background */
+    color: #F8B229; /* Gold/Yellow text color */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    font-weight: bold;
+    /* Removed box-shadow since background is transparent */
+}

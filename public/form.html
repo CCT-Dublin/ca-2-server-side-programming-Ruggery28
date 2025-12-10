@@ -5,32 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CA_2 Server Side</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <h1>CA-2 Server Side Programming</h1>
-    <div id="resultsMessage" style="margin-top: 20px; color: green; font-weight: bold;"></div>
+    <div id="resultsMessage"></div>
     <form id="submissionform" method="POST" action="/submit-form">
 
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="first_name" required><br><br>
-        <span class="error-message" id="error-first_name" style="color: red;"></span><br><br>
+        <span class="error-message" id="error_first_name"></span><br>
 
         <label for="SecondName">Second Name:</label>
         <input type="text" id="SecondName" name="second_name" required><br><br>
-        <span class="error-message" id="error-second_name" style="color: red;"></span><br><br>
+        <span class="error-message" id="error_second_name"></span><br>
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
-        <span class="error-message" id="error-email" style="color: red;"></span><br><br>
+        <span class="error-message" id="error_email"></span><br>
 
         <label for="phoneNumber">Phone Number:</label>
         <input type="text" id="phone" name="phone_number" required><br><br>
-        <span class="error-message" id="error-phone_number" style="color: red;"></span><br><br>
+        <span class="error-message" id="error_phone_number"></span><br>
 
         <label for="eircode">Eircode:</label>
         <input type="text" id="eircode" name="eircode" required><br><br>
-        <span class="error-message" id="error-eircode" style="color: red;"></span><br><br>
+        <span class="error-message" id="error_eircode"></span><br><br>
 
         <input type="submit" value="Submit">
 
@@ -40,7 +41,7 @@
     <!-- Form to receive the file -->
     <form id="uploadform" method="POST" action="/upload-csv" enctype="multipart/form-data">
 
-        <label for="file">Import your file:</label><br>
+        <label for="csvFile">Import your file:</label><br>
         <input type="file" id="csvFile" name="csvFile"><br><br>
 
         <input type="submit" value="Upload Data">
